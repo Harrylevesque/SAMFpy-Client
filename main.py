@@ -1,8 +1,11 @@
 from saving.userfiles import save_response_u, save_response_sv, save_response_svu
 from login.processor import login_processor
 
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
-serviceip = "http://localhost:8000"
+serviceip = os.getenv("host")
 
 def tree():
     choice = input("Would you like to 1) Create or 2) Login: ").strip()

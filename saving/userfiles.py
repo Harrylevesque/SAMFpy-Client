@@ -127,13 +127,23 @@ def save_response_svu(filename: Optional[str] = None, field: Optional[str] = Non
     # Import lazily to avoid circular import at module load time
     from creation.serviceuseruser import get_svu_creation_result
 
-    resp, serviceuuid, privkey = get_svu_creation_result()
+    resp, serviceuuid, privkey, KPdk, KPek = get_svu_creation_result()
 
     data = resp.json()
+    # Handle error response (list) gracefully
+    if isinstance(data, list):
+        print(f"Error from server: {data}")
+        return
     privkey_str = base64.b64encode(privkey).decode('ascii') if isinstance(privkey, (bytes, bytearray)) else str(privkey)
     data["privkey"] = privkey_str
+    # Base64 encode KPdk and KPek if they are bytes
+    KPdk_str = base64.b64encode(KPdk).decode('ascii') if isinstance(KPdk, (bytes, bytearray)) else str(KPdk)
+    KPek_str = base64.b64encode(KPek).decode('ascii') if isinstance(KPek, (bytes, bytearray)) else str(KPek)
+    data["KPdk"] = KPdk_str
+    data["KPek"] = KPek_str
     service_uuid = data.get("serviceuuid") or data.get("serviceUUID")
     svuUUID = data.get("svuUUID") or data.get("svuUUID")
+
 
     if filename is None:
         if service_uuid:

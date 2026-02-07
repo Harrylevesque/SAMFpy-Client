@@ -3,6 +3,8 @@ import base64
 import requests
 import quantcrypt.kem as qkem
 import quantcrypt.internal.pqa.kem_algos as algos
+from kyber_py.ml_kem import ML_KEM_1024
+
 
 from main import serviceip
 
@@ -11,6 +13,10 @@ try:
     # Example: if your discover is MLKEM_768.keygen()
     kp = algos.MLKEM_768()
     pubkey, privkey = kp.keygen()
+
+
+    KPek, KPdk = ML_KEM_1024.keygen()
+
 except Exception as e:
     print(f"quantcrypt imported but could not generate keypair: {e}")
     sys.exit(1)
@@ -38,7 +44,12 @@ print(f"Public key length: {len(pub_bytes)} bytes")
 serviceuuid = input("Enter service UUID: ")
 
 
-data = {"pubk": base64.b64encode(pub_bytes).decode()}
+data = {
+    "pubk": base64.b64encode(pub_bytes).decode(),
+    "KPek": base64.b64encode(KPek).decode(),  # Key must be 'KPek' to match server
+    "KPdk": base64.b64encode(KPdk).decode()
+}
+print("Request payload:", data)  # Debug print to verify outgoing keys
 resp = requests.post(f"{serviceip}/service/{serviceuuid}/user/new", json=data)
 print(resp.status_code)
 try:
@@ -52,7 +63,7 @@ def get_svu_creation_result():
 
     This is used by saving.userfiles.save_response_svu to avoid a circular import.
     """
-    return resp, serviceuuid, privkey
+    return resp, serviceuuid, privkey, KPdk, KPek
 
 
 if __name__ == "__main__":
