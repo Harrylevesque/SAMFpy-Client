@@ -1,20 +1,32 @@
-from kyber_py.ml_kem import ML_KEM_1024
+from nacl.signing import SigningKey
+from nacl.encoding import Base64Encoder
 
+
+# -----------------------------
 # Generate keypair
-ek, dk = ML_KEM_1024.keygen()  # ek: encapsulation key (public), dk: decapsulation key (private)
+# -----------------------------
+def generate_client_keys():
+    signing_key = SigningKey.generate()
+    private_key = signing_key.encode()
+    public_key = signing_key.verify_key.encode()
+    return public_key, private_key
 
-print("Encapsulation Key (Public):", ek)
-print("Decapsulation Key (Private):", dk)
 
-# Use the actual key bytes for encapsulation/decapsulation
-shared_key, ciphertext = ML_KEM_1024.encaps(ek)  # 32-byte shared_key, ciphertext ~1568 bytes for 1024
+# -----------------------------
+# Export public key safely for transport
+# (Base64 so it can go over JSON / HTTP / sockets)
+# -----------------------------
+def export_public_key(public_key: bytes) -> str:
+    return Base64Encoder.encode(public_key).decode()
 
-# Decapsulate to check
-recovered_key = ML_KEM_1024.decaps(dk, ciphertext)
 
-# Verify it's "ok"
-vaild = assert shared_key == recovered_key, "0"
-print(1)
+# -----------------------------
+# Sign server challenge
+# -----------------------------
+def sign_challenge(private_key: bytes, challenge: bytes) -> bytes:
+    signing_key = SigningKey(private_key)
+    signed = signing_key.sign(challenge)
+    return signed  # signature + message
 
-if vaild = 1:
-    print("Kyber-1024 check passed: keys match.")
+if __name__ == '__main__':
+    generate_client_keys()
