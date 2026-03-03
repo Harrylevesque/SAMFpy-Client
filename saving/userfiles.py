@@ -6,6 +6,10 @@ import base64
 import requests
 from pathlib import Path
 
+# generate_client_keys is intentionally not imported here to avoid circular imports.
+# The creation module (creation/serviceuseruser.py) generates the client keypair and
+# returns the keys from get_svu_creation_result(), which this module consumes.
+
 # Determine project root relative to this file and create storage/userfiles there
 BASE_DIR = Path(__file__).resolve().parents[1]
 storage_dir = BASE_DIR / "storage" / "userfiles"
@@ -127,13 +131,33 @@ def save_response_svu(filename: Optional[str] = None, field: Optional[str] = Non
     # Import lazily to avoid circular import at module load time
     from creation.serviceuseruser import get_svu_creation_result
 
-    resp, serviceuuid, privkey = get_svu_creation_result()
+    # get_svu_creation_result now returns (resp, serviceuuid, privkey, KPdk, KPek, client_pub_bytes, client_priv_bytes)
+    resp, serviceuuid, privkey, KPdk, KPek, client_pub_bytes, client_priv_bytes = get_svu_creation_result()
 
     data = resp.json()
+    # Handle error response (list) gracefully
+    if isinstance(data, list):
+        print(f"Error from server: {data}")
+        return
     privkey_str = base64.b64encode(privkey).decode('ascii') if isinstance(privkey, (bytes, bytearray)) else str(privkey)
     data["privkey"] = privkey_str
+    # Base64 encode KPdk and KPek if they are bytes
+    KPdk_str = base64.b64encode(KPdk).decode('ascii') if isinstance(KPdk, (bytes, bytearray)) else str(KPdk)
+    KPek_str = base64.b64encode(KPek).decode('ascii') if isinstance(KPek, (bytes, bytearray)) else str(KPek)
+    data["KPdk"] = KPdk_str
+    data["KPek"] = KPek_str
+    # The creation module generated the client keypair and sent only the public key to the server.
+    # We received the client keypair back from get_svu_creation_result so we can persist the private key.
+    try:
+        client_pub_b64 = base64.b64encode(client_pub_bytes).decode('ascii') if isinstance(client_pub_bytes, (bytes, bytearray)) else str(client_pub_bytes)
+        client_priv_b64 = base64.b64encode(client_priv_bytes).decode('ascii') if isinstance(client_priv_bytes, (bytes, bytearray)) else str(client_priv_bytes)
+        data["client_pubkey"] = client_pub_b64
+        data["client_privkey"] = client_priv_b64
+    except Exception as e:
+        data["client_key_error"] = str(e)
     service_uuid = data.get("serviceuuid") or data.get("serviceUUID")
     svuUUID = data.get("svuUUID") or data.get("svuUUID")
+
 
     if filename is None:
         if service_uuid:

@@ -5,8 +5,8 @@ from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import serialization
 
 # === CONFIGURABLE PARAMETERS ===
-INTERVAL = 3600      # seconds per time bucket
-TOLERANCE = 15     # bucket tolerance
+INTERVAL = 5      # seconds per time bucket
+TOLERANCE = 2     # bucket tolerance
 
 
 def time_bucket(interval=INTERVAL):
