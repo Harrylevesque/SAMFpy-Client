@@ -2,3 +2,8 @@
 /storage/workingfiles/
 /.venv
 /.venv1
+/.idea
+/.vscode
+*.pyc
+__pycache__/
+*.log
