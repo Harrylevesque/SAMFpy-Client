@@ -7,7 +7,7 @@ import requests
 from saving.workingfiles import update_workingfile_status
 
 load_dotenv()
-serviceip = os.getenv("host") or "http://localhost:8000"
+serviceip = os.getenv("host")
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 

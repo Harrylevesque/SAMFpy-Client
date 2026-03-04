@@ -7,7 +7,8 @@ from kyber_py.ml_kem import ML_KEM_1024
 
 
 from main import serviceip
-from login.keypair import generate_client_keys
+from login.keypair import generate_client_keys as generate_signing_keys
+from login.otp import generate_client_keys as generate_otp_keys
 
 
 try:
@@ -18,9 +19,11 @@ try:
 
     KPek, KPdk = ML_KEM_1024.keygen()
 
-    # Generate client signing keypair here so we can send the public key to the server
-    # and also return the private key for local saving without importing login.keypair elsewhere.
-    client_pubkey, client_privkey = generate_client_keys()
+    # Generate client signing keypair (raw bytes) for registration payload.
+    client_pubkey, client_privkey = generate_signing_keys()
+
+    # Generate OTP signing keypair: send pubkey to server, keep private key local.
+    otp_privK, otp_pubK = generate_otp_keys()
 
 except Exception as e:
     print(f"quantcrypt imported but could not generate keypair: {e}")
@@ -49,16 +52,18 @@ print(f"Public key length: {len(pub_bytes)} bytes")
 serviceuuid = input("Enter service UUID: ")
 
 
-# Ensure client pubkey is bytes for consistent encoding
+# Ensure client signing pubkey is bytes for consistent transport encoding.
 client_pub_bytes = to_bytes(client_pubkey)
-client_priv_bytes = client_privkey if isinstance(client_privkey, (bytes, bytearray, memoryview)) else to_bytes(client_privkey)
+
+# Ensure OTP keys are in bytes/strings expected by payload/file storage.
 
 data = {
     "pubk": base64.b64encode(pub_bytes).decode(),
     "KPek": base64.b64encode(KPek).decode(),  # Key must be 'KPek' to match server
     "KPdk": base64.b64encode(KPdk).decode(),
-    # Send only the client's public signing key to the server
-    "client_pubk": base64.b64encode(client_pub_bytes).decode()
+    # Send exactly one base64 layer for client signing public key bytes.
+    "client_pubk": base64.b64encode(client_pub_bytes).decode(),
+    "otp_pubK": otp_pubK,
 }
 print("Request payload:", data)  # Debug print to verify outgoing keys
 resp = requests.post(f"{serviceip}/service/{serviceuuid}/user/new", json=data)
@@ -70,12 +75,18 @@ except ValueError:
 
 
 def get_svu_creation_result():
-    """Helper to expose resp, serviceuuid and privkey without importing saving.userfiles.
+    """Expose response data needed by saving.userfiles without circular imports.
 
-    This is used by saving.userfiles.save_response_svu to avoid a circular import.
+    This now returns four values:
+      - resp: the requests.Response from the server
+      - serviceuuid: the service UUID used in the request
+      - otp_privK: the OTP private key (kept locally)
+      - client_privkey: the client signing private key (raw bytes)
+
+    Callers should base64-encode client_privkey when persisting to JSON if it's bytes.
     """
-    # Also return the client keypair so callers may persist the private key locally
-    return resp, serviceuuid, privkey, KPdk, KPek, client_pub_bytes, client_priv_bytes
+    # Persist only OTP private key locally; OTP public key is sent to server in payload.
+    return resp, serviceuuid, otp_privK, client_privkey
 
 
 if __name__ == "__main__":

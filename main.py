@@ -29,7 +29,7 @@ def tree():
             tree()
             return
         svu_uuid = input("What is the account UUID to login to?: ").strip()
-        if sv_uuid == "":
+        if svu_uuid == "":
             print("Account UUID cannot be empty.")
             tree()
             return
