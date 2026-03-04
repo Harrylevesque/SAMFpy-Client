@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1f1c608e-8925-4275-b994-90d00b3d3722" name="Changes" comment="Refactor keypair generation and update handling for client signing keys">
+      <change beforePath="$PROJECT_DIR$/login/otp.py" beforeDir="false" afterPath="$PROJECT_DIR$/login/otp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login/processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/login/processor.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/Users/harry/PycharmProjects/SSLocal2.1" value="35G4kJ5L8GiqimMB19PtgIjIMmh" />
+    </persistenceIdMap>
+  </component>
+  <component name="CopilotUserSelectedModel">
+    <selectedModels>
+      <entry key="edit-panel" value="GPT-5 mini" />
+      <entry key="chat-panel" value="GPT-5 mini" />
+      <entry key="agent-panel" value="GPT-5 mini" />
+    </selectedModels>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform)); sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo, NoAppException&#10;for module in [&quot;main.py&quot;, &quot;wsgi.py&quot;, &quot;app.py&quot;]:&#10;    try: locals().update(ScriptInfo(app_import_path=module, create_app=None).load_app().make_shell_context()); print(&quot;\nFlask App: %s&quot; % app.import_name); break&#10;    except NoAppException: pass">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform)); sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo, NoAppException&#10;for module in [&quot;main.py&quot;, &quot;wsgi.py&quot;, &quot;app.py&quot;]:&#10;    try: locals().update(ScriptInfo(app_import_path=module, create_app=None).load_app().make_shell_context()); print(&quot;\nFlask App: %s&quot; % app.import_name); break&#10;    except NoAppException: pass" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="keypair" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Harrylevesque&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Harrylevesque/SSLocal2.1.git&quot;,
+    &quot;accountId&quot;: &quot;1edd0ed7-d627-4e60-9cb2-38556fcb4552&quot;
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;Harrylevesque&quot;,
+    &quot;repository&quot;: &quot;SSLocal2.1&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/.venv1/lib/python3.13/site-packages/nacl/signing.py" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="JQLSearcherProjectManager">
+    <selected>-1</selected>
+    <searchers />
+  </component>
+  <component name="JiraServerManager">
+    <servers />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="35G4kJ5L8GiqimMB19PtgIjIMmh" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "JavaScript Debug.index.html.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.client.executor": "Run",
+    "Python.conUUID.executor": "Run",
+    "Python.datafetcher.executor": "Run",
+    "Python.keygen.executor": "Run",
+    "Python.keymatch.executor": "Run",
+    "Python.keypair.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.otp.executor": "Run",
+    "Python.passkey.executor": "Run",
+    "Python.processor.executor": "Run",
+    "Python.pubkmatch.executor": "Run",
+    "Python.requests.executor": "Run",
+    "Python.server.executor": "Run",
+    "Python.service.executor": "Run",
+    "Python.serviceuser.executor": "Run",
+    "Python.serviceuseruser.executor": "Run",
+    "Python.userfiles.executor": "Run",
+    "Python.workingfiles.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/userfiles" />
+      <recent name="$PROJECT_DIR$/saving" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-PY-251.29188.22" />
+        <option value="bundled-python-sdk-1f1b7bcced7d-64d779b69b7a-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.29188.22" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1f1c608e-8925-4275-b994-90d00b3d3722" name="Changes" comment="" />
+      <created>1762723215622</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1762723215622</updated>
+      <workItem from="1762723216725" duration="1571000" />
+      <workItem from="1762725916926" duration="20156000" />
+      <workItem from="1763178887822" duration="17944000" />
+      <workItem from="1763432122434" duration="73000" />
+      <workItem from="1763432201448" duration="8592000" />
+      <workItem from="1763518764926" duration="7000" />
+      <workItem from="1763520174673" duration="8898000" />
+      <workItem from="1763605428251" duration="3933000" />
+      <workItem from="1764036489351" duration="6189000" />
+      <workItem from="1764123214756" duration="608000" />
+      <workItem from="1764458875282" duration="8367000" />
+      <workItem from="1764540580457" duration="212000" />
+      <workItem from="1764540832087" duration="3839000" />
+      <workItem from="1764548900157" duration="8814000" />
+      <workItem from="1764727501018" duration="2668000" />
+      <workItem from="1765056213105" duration="604000" />
+      <workItem from="1765243809282" duration="1205000" />
+      <workItem from="1765330807915" duration="22000" />
+      <workItem from="1765401743765" duration="45000" />
+      <workItem from="1766209150926" duration="947000" />
+      <workItem from="1766874737108" duration="3132000" />
+      <workItem from="1766948747028" duration="9517000" />
+      <workItem from="1766976153129" duration="2623000" />
+      <workItem from="1767044440645" duration="598000" />
+      <workItem from="1767047390558" duration="10892000" />
+      <workItem from="1767205479388" duration="5423000" />
+      <workItem from="1767388523790" duration="4253000" />
+      <workItem from="1767558038649" duration="2832000" />
+      <workItem from="1767664486329" duration="1203000" />
+      <workItem from="1768072868125" duration="3640000" />
+      <workItem from="1768866339532" duration="764000" />
+      <workItem from="1769364049676" duration="1392000" />
+      <workItem from="1769918743090" duration="2461000" />
+      <workItem from="1770244620635" duration="2929000" />
+      <workItem from="1770485338921" duration="8233000" />
+      <workItem from="1770505234148" duration="22000" />
+      <workItem from="1771629495965" duration="840000" />
+      <workItem from="1772317870029" duration="12585000" />
+      <workItem from="1772330578286" duration="1766000" />
+      <workItem from="1772385608939" duration="7626000" />
+      <workItem from="1772467244009" duration="7973000" />
+      <workItem from="1772477682004" duration="12235000" />
+      <workItem from="1772510186989" duration="7102000" />
+      <workItem from="1772519050637" duration="12321000" />
+    </task>
+    <task id="LOCAL-00001" summary="Add response saving functionality for user and service UUIDs">
+      <option name="closed" value="true" />
+      <created>1763240008214</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1763240008214</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Implement user and service login functionality with response handling">
+      <option name="closed" value="true" />
+      <created>1764036653823</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1764036653823</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Refactor service URL handling to use a configurable service IP">
+      <option name="closed" value="true" />
+      <created>1764112309307</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1764112309307</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Remove hardcoded HTTP scheme from service URL requests">
+      <option name="closed" value="true" />
+      <created>1764730215656</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1764730215656</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Add OTP generation and working file handling functionality">
+      <option name="closed" value="true" />
+      <created>1767202068146</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1767202068146</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Add environment configuration and implement keypair generation with integration">
+      <option name="closed" value="true" />
+      <created>1770505251867</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1770505251867</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Add client keypair generation and update service user handling for signing">
+      <option name="closed" value="true" />
+      <created>1772398430389</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1772398430389</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Add keymatch functionality and update working file status handling">
+      <option name="closed" value="true" />
+      <created>1772510021446</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1772510021446</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Add keypair signing functionality and update working file status handling">
+      <option name="closed" value="true" />
+      <created>1772518281376</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1772518281376</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Refactor keypair generation and update handling for client signing keys">
+      <option name="closed" value="true" />
+      <created>1772604176833</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1772604176833</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Add response saving functionality for user and service UUIDs" />
+    <MESSAGE value="Implement user and service login functionality with response handling" />
+    <MESSAGE value="Refactor service URL handling to use a configurable service IP" />
+    <MESSAGE value="Remove hardcoded HTTP scheme from service URL requests" />
+    <MESSAGE value="Add OTP generation and working file handling functionality" />
+    <MESSAGE value="Add environment configuration and implement keypair generation with integration" />
+    <MESSAGE value="Add client keypair generation and update service user handling for signing" />
+    <MESSAGE value="Add keymatch functionality and update working file status handling" />
+    <MESSAGE value="Add keypair signing functionality and update working file status handling" />
+    <MESSAGE value="Refactor keypair generation and update handling for client signing keys" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor keypair generation and update handling for client signing keys" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/saving/userfiles.py</url>
+          <line>129</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/saving/userfiles.py</url>
+          <line>19</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/login/pubkmatch.py</url>
+          <line>1</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/saving/userfiles.py</url>
+          <line>51</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/SSLocal2_1$keygen.coverage" NAME="keygen Coverage Results" MODIFIED="1769364491970" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/login/newOTP" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$main.coverage" NAME="main Coverage Results" MODIFIED="1772604025690" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$otp.coverage" NAME="otp Coverage Results" MODIFIED="1770244722138" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/login" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$serviceuseruser.coverage" NAME="serviceuseruser Coverage Results" MODIFIED="1772394873281" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/creation" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$client.coverage" NAME="client Coverage Results" MODIFIED="1768077676528" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/login/newOTP" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$conUUID.coverage" NAME="conUUID Coverage Results" MODIFIED="1764459310951" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/login" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$service.coverage" NAME="service Coverage Results" MODIFIED="1763594553688" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/creation" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$serviceuser.coverage" NAME="serviceuser Coverage Results" MODIFIED="1767573321435" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/creation" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$pubkmatch.coverage" NAME="pubkmatch Coverage Results" MODIFIED="1772472939008" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/login" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$processor.coverage" NAME="processor Coverage Results" MODIFIED="1772515686823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/login" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$passkey.coverage" NAME="passkey Coverage Results" MODIFIED="1762832971253" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$server.coverage" NAME="server Coverage Results" MODIFIED="1769364527743" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/login/newOTP" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$keymatch.coverage" NAME="keymatch Coverage Results" MODIFIED="1772602141758" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/login" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$datafetcher.coverage" NAME="datafetcher Coverage Results" MODIFIED="1764541309496" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/login" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$requests.coverage" NAME="requests Coverage Results" MODIFIED="1764541522618" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/login" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$workingfiles.coverage" NAME="workingfiles Coverage Results" MODIFIED="1772467508061" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/saving" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$keypair.coverage" NAME="keypair Coverage Results" MODIFIED="1772392097451" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/login" />
+    <SUITE FILE_PATH="coverage/SSLocal2_1$userfiles.coverage" NAME="userfiles Coverage Results" MODIFIED="1772394557484" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/saving" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>
