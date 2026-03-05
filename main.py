@@ -14,10 +14,13 @@ def tree():
         create = input("Which save function to run? (u/sv/svu): ").strip().lower()
         if create == "u":
             save_response_u()
+            tree()
         elif create == "sv":
             save_response_sv()
+            tree()
         elif create == "svu":
             save_response_svu()
+            tree()
         else:
             print("Invalid choice, please try again.")
             tree()
@@ -35,6 +38,7 @@ def tree():
             return
 
         login_processor(sv_uuid, svu_uuid, serviceip)
+        tree()
 
     else:
         print("Invalid choice, please try again.")
