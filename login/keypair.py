@@ -14,10 +14,13 @@ def export_public_key(public_key: bytes) -> str:
 
 
 
-def sign_challenge(private_key: bytes, challenge: bytes) -> bytes:
+def sign_challenge_keypair(private_key: bytes, challenge: bytes) -> bytes:
     signing_key = SigningKey(private_key)
     signed = signing_key.sign(challenge)
     return signed
+
+# Backwards-compatible alias (optional)
+sign_challenge = sign_challenge_keypair
 
 if __name__ == '__main__':
     generate_client_keys()
