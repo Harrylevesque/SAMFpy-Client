@@ -47,24 +47,38 @@ def keypair(sv_uuid, svu_uuid, con_uuid):
             raise ValueError(f"Failed to decode client_privkey from base64: {e}")
         if len(privK_bytes) != 32:
             raise ValueError(f"Decoded client_privkey is {len(privK_bytes)} bytes, expected 32 bytes.")
+
     signature = sign_challenge_keypair(privK_bytes, challenge)
     data3_5 = {
         "signature": base64.b64encode(signature).decode("ascii"),
-        "challenge": challenge_b64
+        "challenge": challenge_b64,
     }
-    keypairValid = requests.post(f"{serviceip}/login/{con_uuid}/step/3.5", data=json.dumps(data3_5))
 
-    keypairValid_json = keypairValid.json()
+    try:
+        # Send a real JSON body; using data=json.dumps(...) sends a raw string and can cause 422.
+        keypair_valid = requests.post(
+            f"{serviceip}/login/{con_uuid}/step/3.5",
+            json=data3_5,
+            timeout=30,
+        )
+        keypair_valid.raise_for_status()
+        keypair_valid_json = keypair_valid.json()
+    except requests.RequestException as e:
+        print(f"Step 3.5 request failed: {e}")
+        return None
+    except ValueError as e:
+        print(f"Step 3.5 returned non-JSON response: {e}")
+        return None
+
     update_workingfile_status(
         con_uuid=con_uuid,
-        status=keypairValid_json.get("status", "keypair_complete"),
+        status=keypair_valid_json.get("status", "keypair_complete"),
         step_name="keypair",
-        time_of_last_completion=keypairValid_json.get("time_of_last_completion"),
+        time_of_last_completion=keypair_valid_json.get("time_of_last_completion"),
     )
 
-
-    print(keypairValid.text)
-    return keypairValid.content
+    print(keypair_valid.text)
+    return keypair_valid_json
 
 
 def otp(con_uuid):
@@ -206,12 +220,16 @@ def login_processor(sv_uuid: str, svu_uuid: str, serviceip: str) -> Optional[str
             returned = otp_return(con_uuid, signed_otp, payload_bytes)
             print(returned)
 
-            returned_status = returned.get("status")
+            returned_status = returned.get("status") or ("complete" if returned.get("signature_valid") else "otp_failed")
             time_of_last_completion = returned.get("time_of_last_completion")
-            step_name = returned.get("step_name")
+            step_name = returned.get("step_name") or "otp"
 
-
-            update_workingfile_status(con_uuid, time_of_last_completion, step_name, returned_status)
+            update_workingfile_status(
+                con_uuid=con_uuid,
+                status=returned_status,
+                step_name=step_name,
+                time_of_last_completion=time_of_last_completion,
+            )
 
             return returned_status
 
