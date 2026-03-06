@@ -6,4 +6,5 @@ pytest-asyncio
 requests
 requests
 quantcrypt
-
+textual
+textual-web

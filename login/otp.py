@@ -18,16 +18,50 @@ def generate_client_keys():
 
 
 
-def sign_challenge(private_key: bytes, payload_json: str) -> bytes:
-    signing_key = SigningKey(private_key)
+def sign_challenge_otp(private_key: bytes, payload_json) -> bytes:
+    """Sign an OTP challenge.
 
-    payload = json.loads(payload_json)
+    Accepts payload_json as either str or bytes (UTF-8). Returns the signed message bytes.
+    Raises ValueError with clear messages on bad input.
+    """
+    # Ensure payload_json is a str containing JSON
+    if isinstance(payload_json, bytes):
+        try:
+            payload_text = payload_json.decode('utf-8')
+        except UnicodeDecodeError:
+            # fallback to surrogatepass to preserve bytes if necessary
+            payload_text = payload_json.decode('utf-8', errors='surrogatepass')
+    elif isinstance(payload_json, str):
+        payload_text = payload_json
+    else:
+        raise ValueError("payload_json must be str or bytes containing JSON")
 
-    challenge = Base64Encoder.decode(payload["challenge"].encode())
+    try:
+        payload = json.loads(payload_text)
+    except Exception as e:
+        raise ValueError(f"Failed to parse payload_json as JSON: {e}")
+
+    if 'challenge' not in payload or 'issued_at' not in payload:
+        raise ValueError("payload_json must contain 'challenge' and 'issued_at' fields")
+
+    # challenge is base64 encoded in the JSON
+    try:
+        challenge = Base64Encoder.decode(payload["challenge"].encode())
+    except Exception as e:
+        raise ValueError(f"Failed to decode 'challenge' from base64: {e}")
+
     issued_at = payload["issued_at"]
 
+    signing_key = SigningKey(private_key)
     message = challenge + str(issued_at).encode()
 
     signed = signing_key.sign(message)
+
+
+
     return signed
+
+
+# Backwards-compatible alias
+sign_challenge = sign_challenge_otp
 

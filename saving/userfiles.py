@@ -5,6 +5,12 @@ from typing import Optional
 import base64
 import requests
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+serviceip = os.getenv("host")
 
 # generate_client_keys is intentionally not imported here to avoid circular imports.
 # The creation module (creation/serviceuseruser.py) sends otp_pubK during registration
@@ -15,6 +21,8 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 storage_dir = BASE_DIR / "storage" / "userfiles"
 storage_dir.mkdir(parents=True, exist_ok=True)
 save_location = str(storage_dir)
+
+serviceip = os.getenv("host")
 
 
 def save_response_u(filename: Optional[str] = None, field: Optional[str] = None) -> None:
@@ -156,6 +164,12 @@ def save_response_svu(filename: Optional[str] = None, field: Optional[str] = Non
 
     service_uuid = data.get("serviceuuid") or data.get("serviceUUID") or serviceuuid
     svuUUID = data.get("svuUUID") or data.get("svuUuid") or data.get("svuuuid")
+
+    import webbrowser
+
+    url = f"{serviceip}?mode=register&sv-uuid={service_uuid}&svu-uuid={svuUUID}"
+    webbrowser.open(url)
+
 
     if filename is None:
         if service_uuid:
