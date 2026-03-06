@@ -191,6 +191,110 @@ def otp_return(con_uuid, signed_otp, payload_json_bytes):
 
 
 
+
+
+def webauthn(con_uuid):
+
+
+    start = requests.get(f"{serviceip}/webauthn/auth/start?mode=authenticate&con-uuid={con_uuid}")
+    print(start.text)
+
+    if start is not None:
+        import webbrowser
+
+        # Find the working file from several likely base locations (respect BASE_SAVE_DIR)
+        candidates = [Path(os.getenv("BASE_SAVE_DIR", "./storage")), Path.cwd() / "storage", Path("/storage")]
+        # Also try project-root storage if available
+        try:
+            project_root = Path(__file__).resolve().parents[1]
+            candidates.insert(1, project_root / "storage")
+        except Exception:
+            pass
+
+        wf_path = None
+        tried = []
+        for base in candidates:
+            wf_candidate = base / "workingfiles" / f"{con_uuid}.json"
+            tried.append(str(wf_candidate))
+            if wf_candidate.exists():
+                wf_path = wf_candidate
+                break
+            alt = base / "workingfiles" / con_uuid
+            tried.append(str(alt))
+            if alt.exists():
+                wf_path = alt
+                break
+
+        if wf_path is None:
+            print("webauthn: working file not found. Tried:")
+            for p in tried:
+                print("  ", p)
+            return
+
+        # Load the working file and accept dict or list formats
+        with open(wf_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+            # Helper: recursively search dicts/lists for sv_uuid and svu_uuid
+            def recursive_find(obj):
+                sv = None
+                svu = None
+
+                if isinstance(obj, dict):
+                    # direct keys first
+                    sv = obj.get("sv_uuid") or obj.get("serviceuuid") or obj.get("service_uuid") or obj.get("serviceUuid")
+                    svu = (
+                        obj.get("svu_uuid") or obj.get("svuUUID") or obj.get("svuUuid") or obj.get("svu") or obj.get("service_user_uuid")
+                    )
+                    if sv and svu:
+                        return sv, svu
+                    # fallback to context
+                    ctx = obj.get("context")
+                    if isinstance(ctx, dict):
+                        sv = sv or ctx.get("sv_uuid") or ctx.get("serviceuuid") or ctx.get("service_uuid")
+                        svu = svu or ctx.get("svu_uuid") or ctx.get("svuUUID") or ctx.get("svuUuid") or ctx.get("service_user_uuid")
+                        if sv and svu:
+                            return sv, svu
+
+                    # recurse into values
+                    for v in obj.values():
+                        try_sv, try_svu = recursive_find(v)
+                        if try_sv and not sv:
+                            sv = try_sv
+                        if try_svu and not svu:
+                            svu = try_svu
+                        if sv and svu:
+                            return sv, svu
+
+                elif isinstance(obj, list):
+                    for item in obj:
+                        try_sv, try_svu = recursive_find(item)
+                        if try_sv and not sv:
+                            sv = try_sv
+                        if try_svu and not svu:
+                            svu = try_svu
+                        if sv and svu:
+                            return sv, svu
+
+                return sv, svu
+
+            sv_uuid, svu_uuid = recursive_find(data)
+
+            if not sv_uuid or not svu_uuid:
+                print("webauthn: could not determine sv_uuid or svu_uuid from working file (after recursive search)")
+                print("  sv_uuid:", sv_uuid)
+                print("  svu_uuid:", svu_uuid)
+                return
+
+        # Open the registration UI (URL may need adjustment depending on server)
+        url = f"{serviceip}?mode=authentication&con-uuid={con_uuid}"
+        webbrowser.open(url)
+        print(url)
+
+    # end if start is not None
+    pass
+
+
 def login_processor(sv_uuid: str, svu_uuid: str, serviceip: str) -> Optional[str]:
     """Initialize the working file for a login attempt.
 
@@ -231,7 +335,16 @@ def login_processor(sv_uuid: str, svu_uuid: str, serviceip: str) -> Optional[str
                 time_of_last_completion=time_of_last_completion,
             )
 
+            # If OTP step succeeded (signature validated or returned 'complete'), trigger webauthn flow
+            if returned.get("signature_valid") or returned_status == "complete":
+                try:
+                    webauthn(con_uuid)
+                except Exception as e:
+                    print(f"webauthn call failed: {e}")
+
             return returned_status
+
+
 
 
     else:
