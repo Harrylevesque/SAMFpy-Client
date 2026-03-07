@@ -1,6 +1,7 @@
 # python
 import os
 import json
+import ast
 from typing import Optional
 import base64
 import requests
@@ -23,6 +24,89 @@ storage_dir.mkdir(parents=True, exist_ok=True)
 save_location = str(storage_dir)
 
 serviceip = os.getenv("host")
+
+
+def _ensure_scheme(url: str) -> str:
+    if not url.startswith("http://") and not url.startswith("https://"):
+        return "https://" + url
+    return url
+
+
+def update_humans_json(svc_ip: str, service_uuid: str, svu_uuid: Optional[str], username: Optional[str] = None) -> None:
+    """GET {svc_ip}/humans, parse the response, and upsert into BASE_DIR/humans.json.
+
+    Expected response shape (either form is accepted):
+      {"human_readable_name": "...", "service_ip": "...", "contact_email": "...", "description": "..."}
+    or wrapped:
+      {"humans": "{'human_readable_name': ..., ...}"}
+    """
+    if not svc_ip or not service_uuid:
+        return
+
+    url = f"{_ensure_scheme(svc_ip).rstrip('/')}/humans"
+    raw = {}
+    try:
+        resp = requests.get(url, timeout=10)
+        if resp.status_code == 200:
+            try:
+                raw = resp.json()
+            except Exception:
+                try:
+                    raw = ast.literal_eval(resp.text)
+                except Exception:
+                    raw = {}
+        else:
+            print(f"Warning: {url} returned {resp.status_code}")
+    except Exception as e:
+        print(f"Warning: could not fetch {url}: {e}")
+
+    # Unwrap if server returns {"humans": "{'key': 'val'}"}
+    humans_field = raw.get("humans", raw)
+    if isinstance(humans_field, str):
+        try:
+            humans_field = json.loads(humans_field)
+        except Exception:
+            try:
+                humans_field = ast.literal_eval(humans_field)
+            except Exception:
+                humans_field = {}
+
+    hrn         = humans_field.get("human_readable_name", "")
+    serviceip_v = humans_field.get("service_ip", "")
+    contact     = humans_field.get("contact_email", "")
+    description = humans_field.get("description", "")
+
+    humans_file = BASE_DIR / "humans.json"
+    humans = {}
+    if humans_file.exists():
+        try:
+            with open(humans_file, "r") as f:
+                humans = json.load(f)
+        except Exception:
+            humans = {}
+
+    svc_entry = humans.get(service_uuid, {})
+    svc_entry.update({
+        "sv_uuid":       service_uuid,
+        "hrn":           hrn,
+        "serviceip":     serviceip_v,
+        "contact_email": contact,
+        "description":   description,
+    })
+
+    if svu_uuid:
+        chosen_username = username or f"CHANGEME"
+        svc_entry[svu_uuid] = {
+            "svu_uuid": svu_uuid,
+            "username": chosen_username,
+        }
+
+    humans[service_uuid] = svc_entry
+
+    tmp = str(humans_file) + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(humans, f, indent=2)
+    os.replace(tmp, humans_file)
 
 
 def save_response_u(filename: Optional[str] = None, field: Optional[str] = None) -> None:
@@ -135,13 +219,16 @@ def save_response_sv(filename: Optional[str] = None, field: Optional[str] = None
     print(privkey)
 
 
-def save_response_svu(filename: Optional[str] = None, field: Optional[str] = None) -> None:
+def save_response_svu(filename: Optional[str] = None, field: Optional[str] = None, serviceip_param: Optional[str] = None, service_uuid_param: Optional[str] = None) -> None:
     # Import lazily to avoid circular import at module load time
     from creation.serviceuseruser import get_svu_creation_result
 
-    # get_svu_creation_result returns response, service UUID and locally-kept OTP private key.
-    # Updated: get_svu_creation_result now also returns client_privkey for persistence
-    resp, serviceuuid, otp_privK, client_privkey = get_svu_creation_result()
+    # Use provided parameters if given; fall back to environment-level serviceip
+    svc_ip = serviceip_param or serviceip
+    svc_uuid = service_uuid_param
+
+    # Call the creation routine with explicit server IP and UUID
+    resp, serviceuuid, otp_privK, client_privkey = get_svu_creation_result(serviceip=svc_ip, serviceuuid=svc_uuid)
 
     try:
         data = resp.json()
@@ -165,11 +252,26 @@ def save_response_svu(filename: Optional[str] = None, field: Optional[str] = Non
     service_uuid = data.get("serviceuuid") or data.get("serviceUUID") or serviceuuid
     svuUUID = data.get("svuUUID") or data.get("svuUuid") or data.get("svuuuid")
 
+    if svuUUID is None:
+        raise Exception("No svuUUID")
+
+
     import webbrowser
 
-    url = f"{serviceip}?mode=register&sv-uuid={service_uuid}&svu-uuid={svuUUID}"
-    webbrowser.open(url)
+    # Only open the registration URL if we have an explicit service IP
+    if svc_ip:
+        url = f"{svc_ip}?mode=register&sv-uuid={service_uuid}&svu-uuid={svuUUID}"
+        try:
+            webbrowser.open(url)
+        except Exception:
+            # Non-fatal if browser can't be opened in some environments
+            pass
 
+    # Fetch {serviceip}/humans and append to humans.json
+    try:
+        update_humans_json(svc_ip, service_uuid, svuUUID)
+    except Exception as e:
+        print(f"Warning: could not update humans.json: {e}")
 
     if filename is None:
         if service_uuid:

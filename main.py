@@ -43,7 +43,5 @@ def tree():
     else:
         print("Invalid choice, please try again.")
         tree()
-
-
 if __name__ == "__main__":
     tree()

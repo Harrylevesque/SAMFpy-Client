@@ -12,6 +12,7 @@ import json
 import os
 import requests
 import base64
+import time
 
 load_dotenv()
 serviceip = os.getenv("host")
@@ -295,6 +296,66 @@ def webauthn(con_uuid):
     pass
 
 
+def check_if_complete(serviceip, con_uuid):
+    status_resp = requests.get(f"{serviceip}/session/{con_uuid}")
+    try:
+        status_json = status_resp.json()
+    except Exception as e:
+        # Couldn't parse JSON at all
+        print(f"Failed to parse status response as JSON: {e}")
+        print("Response text:", status_resp.text)
+        return False
+
+    # Normalize into a list of dicts we can safely inspect
+    items = []
+    if isinstance(status_json, dict):
+        items = [status_json]
+    elif isinstance(status_json, list):
+        # keep only dict elements
+        items = [it for it in status_json if isinstance(it, dict)]
+    elif isinstance(status_json, str):
+        # Sometimes APIs return a JSON-encoded string; try to parse it
+        try:
+            inner = json.loads(status_json)
+            if isinstance(inner, dict):
+                items = [inner]
+            elif isinstance(inner, list):
+                items = [it for it in inner if isinstance(it, dict)]
+            else:
+                print(f"Status response is a JSON string but contains unexpected type: {type(inner)}")
+                print("Response text:", status_json)
+                return False
+        except Exception:
+            print("Status response is a plain string, not JSON object/list:", status_json)
+            return False
+    else:
+        print(f"Unexpected status response type: {type(status_json)}")
+        print("Response text:", status_resp.text)
+        return False
+
+    def step_complete(step_name: str) -> bool:
+        """Return True if any item indicates the given step has status 'complete'."""
+        for item in items:
+            # item is guaranteed to be a dict here
+            steps = item.get("steps") if isinstance(item.get("steps"), dict) else {}
+            step_obj = steps.get(step_name) if isinstance(steps.get(step_name), dict) else {}
+            status = step_obj.get("status") if isinstance(step_obj.get("status"), str) else ""
+            if status.lower() == "complete":
+                return True
+        return False
+
+    keymatch_complete = step_complete("keymatch")
+    webauthn_complete = step_complete("webauthn")
+    keypair_complete = step_complete("keypair")
+    otp_complete = step_complete("otp")
+
+    if keymatch_complete and webauthn_complete and keypair_complete and otp_complete:
+        print("complete")
+        return "complete"
+    else:
+        return "failed"
+
+
 def login_processor(sv_uuid: str, svu_uuid: str, serviceip: str) -> Optional[str]:
     """Initialize the working file for a login attempt.
 
@@ -341,6 +402,13 @@ def login_processor(sv_uuid: str, svu_uuid: str, serviceip: str) -> Optional[str
                     webauthn(con_uuid)
                 except Exception as e:
                     print(f"webauthn call failed: {e}")
+
+
+            first_check = check_if_complete(serviceip, con_uuid)
+            while first_check != "complete":
+                print("Waiting for completion...")
+                time.sleep(1)
+                first_check = check_if_complete(serviceip, con_uuid)
 
             return returned_status
 
