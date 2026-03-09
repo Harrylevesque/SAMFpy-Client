@@ -1,5 +1,17 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Header, Footer, Static, Button, Input, Label
+# Robust ScrollView import: different Textual versions export it differently.
+try:
+    # Preferred location in some versions
+    from textual.widgets import ScrollView
+except Exception:
+    try:
+        from textual.widgets.scroll_view import ScrollView
+    except Exception:
+        try:
+            from textual.widgets.scrollview import ScrollView
+        except Exception:
+            ScrollView = None
 from textual.containers import Horizontal, Vertical
 from textual.reactive import reactive
 from textual.screen import ModalScreen
@@ -109,6 +121,8 @@ class SAMFpy(App):
                 yield Static("SAMF.py Client Panel", classes="title")
                 yield Button("Signup", id="signup", variant="success")
                 yield Button("Login", id="login", variant="primary")
+                # Connections button (shows current con--*.json entries)
+                yield Button("Connections", id="connections", variant="warning")
                 yield Button("Delete Account", id="delete", variant="error", classes="bottom_button")
 
             # Main panel (content swaps here)
@@ -212,6 +226,131 @@ class SAMFpy(App):
         # Keep references to these inputs so the submit handler can read values
         self._signup_ip_widget = ip_input
         self._signup_id_widget = id_input
+        self.show_main_content(widgets)
+
+    # Connections view: list con-*.json in storage/workingfiles and map to humans.json
+    def show_connections_page(self):
+        wf_dir = BASE_DIR / "storage" / "workingfiles"
+        widgets: list = [
+            Static("Current Connections", classes="title"),
+            Static("Connections found in storage/workingfiles:", classes="section"),
+        ]
+
+        try:
+            con_files = sorted(wf_dir.glob("con--*.json"))
+        except Exception as e:
+            widgets.append(Static(f"[red]Could not read workingfiles directory: {e}"))
+            self.show_main_content(widgets)
+            return
+
+        if not con_files:
+            widgets.append(Static("[dim]No connection files found."))
+            self.show_main_content(widgets)
+            return
+
+        humans = load_humans()
+
+        # Use a ScrollView if available; otherwise fall back to simple pagination
+        use_scrollview = ScrollView is not None
+        scroll = ScrollView(id="connections_scroll") if use_scrollview else None
+        conn_children = []
+
+        for p in con_files:
+            data = None
+            try:
+                with open(p, "r") as f:
+                    data = json.load(f)
+            except Exception:
+                # If parsing fails, add a placeholder button that identifies the file
+                try:
+                    placeholder = Button(f"[invalid] {p.name}", id=f"conn__{p.name}", variant="warning")
+                    conn_children.append(placeholder)
+                except Exception:
+                    widgets.append(Static(f"[red]Failed to parse {p.name}"))
+                continue
+
+            # Some connection files were saved as a JSON array; normalize to a dict
+            if isinstance(data, list):
+                # Prefer the first dict that contains connection keys
+                found = None
+                for item in data:
+                    if isinstance(item, dict) and ("sv_uuid" in item or "svu_uuid" in item or "con_uuid" in item):
+                        found = item
+                        break
+                if found is None:
+                    # Fallback: take the first element if it's a dict
+                    if data and isinstance(data[0], dict):
+                        data = data[0]
+                    else:
+                        widgets.append(Static(f"[red]Unexpected JSON structure in {p.name}"))
+                        continue
+                else:
+                    data = found
+
+            sv_uuid = data.get("sv_uuid")
+            svu_uuid = data.get("svu_uuid")
+
+            service_name = sv_uuid or "unknown-service"
+            username = svu_uuid or "unknown-user"
+
+            if sv_uuid and isinstance(humans, dict):
+                svc = humans.get(sv_uuid, {}) if isinstance(humans, dict) else {}
+                service_name = svc.get("hrn") or svc.get("serviceip") or service_name
+                if svu_uuid and isinstance(svc, dict):
+                    svu = svc.get(svu_uuid, {})
+                    if isinstance(svu, dict):
+                        username = svu.get("username", username)
+
+            # Present as: username — service_name
+            # Make each connection a button (currently a no-op when pressed)
+            # Use the filename as a safe identifier; prefix to avoid collisions
+            btn_id = f"conn__{p.name}"
+            btn_label = f"{username}  —  {service_name}  [{p.name}]"
+            try:
+                # Add compact class so these buttons are visually smaller
+                btn = Button(btn_label, id=btn_id, variant="warning", classes=("conn-button",))
+                conn_children.append(btn)
+            except Exception:
+                # Fallback to a simple label if Button instantiation fails
+                conn_children.append(Static(f"[bold]{username}[/bold]  —  [cyan]{service_name}[/cyan]  [dim]{p.name}[/dim]"))
+
+        # If ScrollView available, mount the collected children into a Vertical
+        # and mount that into the scroll view. Otherwise use pagination.
+        try:
+            if use_scrollview:
+                list_container = Vertical(*conn_children, id="connections_list")
+                scroll.mount(list_container)
+                widgets.append(scroll)
+            else:
+                # Pagination fallback: store items on the instance and render a page
+                self._conn_items = conn_children
+                self._conn_page = getattr(self, "_conn_page", 0)
+                page_size = 12
+                start = self._conn_page * page_size
+                end = start + page_size
+                page_items = self._conn_items[start:end]
+
+                # Add page items to widgets
+                widgets.extend(page_items)
+
+                # Prev / Next controls
+                nav = []
+                if self._conn_page > 0:
+                    nav.append(Button("Previous", id="conn_prev", variant="default"))
+                if end < len(self._conn_items):
+                    nav.append(Button("Next", id="conn_next", variant="default"))
+                if nav:
+                    nav_container = Horizontal(*nav)
+                    widgets.append(nav_container)
+        except Exception:
+            # Fallback: if anything goes wrong, extend widgets with the children
+            widgets.extend(conn_children)
+        # Debug: print summary of created connection widgets for diagnostic
+        try:
+            ids = [getattr(c, 'id', type(c).__name__) for c in conn_children]
+            print(f"[debug]Connections built: {len(conn_children)}, ids={ids}, use_scrollview={use_scrollview}")
+        except Exception:
+            pass
         self.show_main_content(widgets)
 
     # Handle signup submit
@@ -337,6 +476,31 @@ class SAMFpy(App):
 
         elif button_id == "login":
             self.show_login_page()
+
+        elif button_id == "connections":
+            self.show_connections_page()
+
+        elif button_id and button_id.startswith("conn__"):
+            # Connection buttons are currently intentionally no-ops. Consume
+            # the event so clicks don't fall through to other handlers.
+            return
+
+        elif button_id == "conn_prev":
+            # Pagination: go to previous page
+            if hasattr(self, "_conn_page") and self._conn_page > 0:
+                self._conn_page -= 1
+            self.show_connections_page()
+            return
+
+        elif button_id == "conn_next":
+            # Pagination: go to next page
+            if hasattr(self, "_conn_items"):
+                page_size = 12
+                max_page = (len(self._conn_items) - 1) // page_size
+                if getattr(self, "_conn_page", 0) < max_page:
+                    self._conn_page = getattr(self, "_conn_page", 0) + 1
+            self.show_connections_page()
+            return
 
         elif button_id and button_id.startswith("login__"):
             # Format: login__{sv_uuid}__{svu_uuid}

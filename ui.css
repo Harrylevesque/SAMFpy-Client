@@ -28,6 +28,15 @@ Button {
     margin-bottom: 1;
 }
 
+/* Compact connection buttons (used for the Connections list) */
+Button.conn-button {
+    padding: 0 1;
+    min-height: 1;
+    margin-bottom: 0;
+    align: left middle;
+    text-align: left;
+}
+
 /* Main area */
 
 #main {
