@@ -1,0 +1,67 @@
+Screen {
+    background: #0d1117;
+    layout: horizontal;
+}
+
+/* Sidebar */
+
+#sidebar {
+    width: 28;
+    background: #161b22;
+    border: solid #30363d;
+    padding: 1;
+}
+
+/* Sidebar title */
+
+.title {
+    text-align: center;
+    color: #58a6ff;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+/* Buttons */
+
+Button {
+    width: 100%;
+    margin-bottom: 1;
+}
+
+/* Compact connection buttons (used for the Connections list) */
+Button.conn-button {
+    padding: 0 1;
+    min-height: 1;
+    margin-bottom: 0;
+    align: left middle;
+    text-align: left;
+}
+
+/* Main area */
+
+#main {
+    padding: 1 2;
+}
+
+/* Sections */
+
+.section {
+    text-style: bold;
+    color: #8b949e;
+    margin-top: 1;
+}
+
+/* Status */
+
+#status {
+    color: #3fb950;
+    text-style: bold;
+}
+
+/* Logs */
+
+Log {
+    height: 1fr;
+    border: round #30363d;
+    padding: 1;
+}
