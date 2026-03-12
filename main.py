@@ -45,9 +45,11 @@ def tree():
         tree()
 
 
-from ui import SAMFpy  # Import the app class
+#from ui_app import SAMFpy
 
 if __name__ == "__main__":
-    app = SAMFpy()
-    app.run()
+    tree()
+
+    """app = SAMFpy()
+    app.run()"""
 
