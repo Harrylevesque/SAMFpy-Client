@@ -3,6 +3,7 @@ import base64
 import requests
 import quantcrypt.kem as qkem
 import quantcrypt.internal.pqa.kem_algos as algos
+from kyber_py.kyber import Kyber1024
 from kyber_py.ml_kem import ML_KEM_1024
 from quantcrypt import kem
 
@@ -40,10 +41,10 @@ def get_svu_creation_result(serviceip: str = None, serviceuuid: str = None):
 
     try:
         # Example: if your discover is MLKEM_768.keygen()
-        kp = algos.ML_KEM_768()
+        kp = algos.Kyber768()
         pubkey, privkey = kp.keygen()
 
-        KPek, KPdk = ML_KEM_1024.keygen()
+        KPek, KPdk = Kyber1024.keygen()
 
         # Generate client signing keypair (raw bytes) for registration payload.
         client_pubkey, client_privkey = generate_signing_keys()
