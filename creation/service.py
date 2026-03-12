@@ -10,7 +10,7 @@ from main import serviceip
 
 try:
     # Example: if your discover is MLKEM_768.keygen()
-    kp = algos.MLKEM_768()
+    kp = algos.ML_KEM_768()
     pubkey, privkey = kp.keygen()
 except Exception as e:
     print(f"quantcrypt imported but could not generate keypair: {e}")
