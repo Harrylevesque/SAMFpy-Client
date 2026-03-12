@@ -4,6 +4,7 @@ import requests
 import quantcrypt.kem as qkem
 import quantcrypt.internal.pqa.kem_algos as algos
 from kyber_py.ml_kem import ML_KEM_1024
+from quantcrypt import kem
 
 from login.keypair import generate_client_keys as generate_signing_keys
 from login.otp import generate_client_keys as generate_otp_keys
@@ -39,7 +40,7 @@ def get_svu_creation_result(serviceip: str = None, serviceuuid: str = None):
 
     try:
         # Example: if your discover is MLKEM_768.keygen()
-        kp = algos.MLKEM_768()
+        kp = algos.ML_KEM_768()
         pubkey, privkey = kp.keygen()
 
         KPek, KPdk = ML_KEM_1024.keygen()
