@@ -4,6 +4,7 @@ import requests
 import quantcrypt.kem as qkem
 import quantcrypt.internal.pqa.kem_algos as algos
 from kyber_py.ml_kem import ML_KEM_1024
+from quantcrypt import kem
 
 from login.keypair import generate_client_keys as generate_signing_keys
 from login.otp import generate_client_keys as generate_otp_keys

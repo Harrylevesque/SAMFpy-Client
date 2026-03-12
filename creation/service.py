@@ -3,6 +3,7 @@ import base64
 import requests
 import quantcrypt.kem as qkem
 import quantcrypt.internal.pqa.kem_algos as algos
+from quantcrypt import kem
 
 from main import serviceip
 
