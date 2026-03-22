@@ -41,7 +41,7 @@ def get_svu_creation_result(serviceip: str = None, serviceuuid: str = None):
 
     try:
         # Example: if your discover is MLKEM_768.keygen()
-        kp = algos.Kyber768()
+        kp = algos.MLKEM_768()
         pubkey, privkey = kp.keygen()
 
         KPek, KPdk = Kyber1024.keygen()

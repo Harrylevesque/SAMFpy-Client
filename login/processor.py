@@ -287,6 +287,9 @@ def webauthn(con_uuid):
                 print("  svu_uuid:", svu_uuid)
                 return
 
+        from dotenv import load_dotenv
+        load_dotenv()
+
         # Open the registration UI (URL may need adjustment depending on server)
         url = f"{serviceip}?mode=authentication&con-uuid={con_uuid}"
         webbrowser.open(url)
