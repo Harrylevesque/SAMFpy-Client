@@ -1,0 +1,15 @@
+services:
+  samfpy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: samfpy-client:latest
+    stdin_open: true   # keeps TUI interactive (-i)
+    tty: true          # allocates a terminal (-t)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # makes host.docker.internal work on Linux too
+    environment:
+      # HOST_OS is auto-detected at runtime (linux | mac | windows)
+      # Override only if detection is wrong: HOST_OS=windows docker compose up
+      HOST_OS: ${HOST_OS:-}
+      DOCKER_HOST_IP: host.docker.internal
