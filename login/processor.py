@@ -13,6 +13,7 @@ import os
 import requests
 import base64
 import time
+from browser import open_browser
 
 load_dotenv()
 serviceip = os.getenv("host")
@@ -201,7 +202,6 @@ def webauthn(con_uuid):
     print(start.text)
 
     if start is not None:
-        import webbrowser
 
         # Find the working file from several likely base locations (respect BASE_SAVE_DIR)
         candidates = [Path(os.getenv("BASE_SAVE_DIR", "./storage")), Path.cwd() / "storage", Path("/storage")]
@@ -292,7 +292,7 @@ def webauthn(con_uuid):
 
         # Open the registration UI (URL may need adjustment depending on server)
         url = f"{serviceip}?mode=authentication&con-uuid={con_uuid}"
-        webbrowser.open(url)
+        open_browser(url)
         print(url)
 
     # end if start is not None

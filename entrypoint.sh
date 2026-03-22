@@ -19,6 +19,8 @@ export HOST_OS
 echo "[SAMFpy] Host OS: $HOST_OS"
 
 exec /app/.venv/bin/python -c "
-from ui import SAMFpy
+import runpy
+SAMFpy = runpy.run_path('/app/ui.py')['SAMFpy']
 SAMFpy().run()
 "
+

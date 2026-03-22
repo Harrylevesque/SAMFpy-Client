@@ -8,6 +8,7 @@ import requests
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from browser import open_browser
 
 load_dotenv()
 
@@ -256,13 +257,11 @@ def save_response_svu(filename: Optional[str] = None, field: Optional[str] = Non
         raise Exception("No svuUUID")
 
 
-    import webbrowser
-
     # Only open the registration URL if we have an explicit service IP
     if svc_ip:
         url = f"{svc_ip}?mode=register&sv-uuid={service_uuid}&svu-uuid={svuUUID}"
         try:
-            webbrowser.open(url)
+            open_browser(url)
         except Exception:
             # Non-fatal if browser can't be opened in some environments
             pass
